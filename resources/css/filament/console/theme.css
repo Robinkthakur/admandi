@@ -1,0 +1,190 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/Console/**/*';
+@source '../../../../resources/views/filament/console/**/*';
+
+@theme {
+    --color-primary-50: #f2f0f7;
+    --color-primary-100: #e3dfef;
+    --color-primary-200: #cbbfdf;
+    --color-primary-300: #a996ca;
+    --color-primary-400: #866bb0;
+    --color-primary-500: #1a1532;
+    --color-primary-600: #16112a;
+    --color-primary-700: #120e22;
+    --color-primary-800: #0e0a1b;
+    --color-primary-900: #090612;
+    --color-primary-950: #05030a;
+}
+
+/* Custom CSS to match frontend */
+:root {
+    --primary: #1a1532;
+    --primary-dark: #1a1532;
+    --light: #f7f3ff;
+    --dark: #1a1532;
+    --muted: #757575;
+}
+
+body.fi-body {
+    background-color: #f7f7f7 !important;
+    font-family: 'Outfit', sans-serif !important;
+}
+
+/* Style Sidebar to match primaryDark/dark theme of the frontend */
+.fi-sidebar {
+    background-color: #1a1532 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Ensure all sidebar items and group labels are readable */
+.fi-sidebar nav a, 
+.fi-sidebar nav span, 
+.fi-sidebar nav button,
+.fi-sidebar-group-label {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Hover state for sidebar items */
+.fi-sidebar nav a:hover, 
+.fi-sidebar nav button:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+}
+
+.fi-sidebar nav a:hover svg, 
+.fi-sidebar nav button:hover svg {
+    color: #ffffff !important;
+}
+
+/* Icon colors */
+.fi-sidebar nav svg {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Active item state styling */
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    border-left: 3px solid #cbbfdf !important;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn svg {
+    color: #cbbfdf !important; /* light accent matching active scale */
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn span {
+    color: #ffffff !important;
+}
+
+.fi-sidebar-header {
+    background-color: #1a1532 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.fi-sidebar-header span,
+.fi-sidebar-header a,
+.fi-sidebar-header h1 {
+    color: #fff !important;
+}
+
+/* Make layout card elements have rounded corners like the frontend custom-card (20px) */
+.fi-card,
+.fi-ta-ctn,
+.fi-section,
+.fi-modal-window,
+.fi-dropdown-panel {
+    border-radius: 20px !important;
+    border: 1px solid #ddd !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03) !important;
+    overflow: hidden;
+}
+
+/* Table header stylings */
+.fi-ta-header-cell {
+    background-color: #fcfaff !important;
+    color: #1a1532 !important;
+    font-weight: 600 !important;
+}
+
+/* Button style adjustments to match frontend .theme-btn */
+.fi-btn {
+    border-radius: 15px !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Style primary buttons specifically with the vibrant violet color, excluding toggle buttons */
+.fi-btn.fi-color-primary:not(.fi-fo-toggle-buttons-wrp *),
+.fi-btn-color-primary:not(.fi-fo-toggle-buttons-wrp *) {
+    background-color: #6047e6 !important;
+    border: 2px solid #6047e6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(96, 71, 230, 0.25) !important;
+}
+
+.fi-btn.fi-color-primary:not(.fi-fo-toggle-buttons-wrp *):hover,
+.fi-btn-color-primary:not(.fi-fo-toggle-buttons-wrp *):hover {
+    background-color: #1a1532 !important;
+    border-color: #1a1532 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(26, 21, 50, 0.25) !important;
+}
+
+/* Specific styling for ToggleButtons: active is primary color, inactive is gray/transparent */
+.fi-fo-toggle-buttons input:checked + .fi-btn {
+    background-color: #6047e6 !important;
+    border-color: #6047e6 !important;
+    color: #ffffff !important;
+}
+
+.fi-fo-toggle-buttons input:not(:checked) + .fi-btn {
+    background-color: #ffffff !important;
+    border-color: #ddd !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+}
+
+.fi-fo-toggle-buttons input:not(:checked) + .fi-btn:hover {
+    background-color: #f7f3ff !important;
+    border-color: #6047e6 !important;
+    color: #6047e6 !important;
+}
+
+/* Style active tab items to use the primary color highlight */
+.fi-tabs-item-active,
+.fi-tabs-item.fi-active {
+    border-bottom-color: #6047e6 !important;
+    color: #6047e6 !important;
+}
+
+/* Style active pagination items to use primary color */
+.fi-pagination-item-active,
+.fi-pagination-item.fi-active,
+.fi-pagination-item-active button,
+.fi-pagination-item-active span {
+    background-color: #6047e6 !important;
+    color: #ffffff !important;
+    border-color: #6047e6 !important;
+}
+
+/* Text and selection inputs to match frontend form-control */
+.fi-fo-text-input input,
+.fi-fo-select select,
+.fi-fo-textarea textarea,
+.fi-input-wrp {
+    border-radius: 10px !important;
+}
+
+.fi-input-wrp:focus-within {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 1px var(--primary) !important;
+}
+
+/* Style Topbar with white background and primary theme bottom border */
+.fi-topbar,
+header.fi-topbar {
+    background-color: #ffffff !important;
+    border-bottom: 2px solid #6047e6 !important;
+}

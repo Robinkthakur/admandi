@@ -1,0 +1,89 @@
+@media(max-width: 768px) {
+    body {
+        margin-top: 140px;
+        background: #f7f7f7;
+        font-size: 14px;
+    }
+
+    .section-padding-50 {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+
+    h4 {
+        font-size: 18px;
+    }
+
+    h6 {
+        font-size: 14px;
+        font-weight: 400 !important;
+    }
+
+    .categories {
+
+        padding: 0;
+        padding-top: 20px;
+    }
+
+    .app-header {
+        transition: .3s;
+        /* box-shadow: 0 20px 20px rgba(0, 0, 0, .15) !important; */
+        /* position: relative; */
+    }
+
+    .hide-app-header {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .ad-card {
+        margin-bottom: 0;
+        padding: 0;
+    }
+
+    .ad-card .content {
+        padding: 10px;
+    }
+
+    .ad-card img {
+        border-radius: 0;
+    }
+
+    .category-card {
+        padding: 10px !important;
+    }
+
+    .category-icon {
+        aspect-ratio: 1/1;
+        object-fit: contain;
+    }
+
+    .details-page .ad-title {
+        font-size: 1.2rem;
+    }
+
+    .details-page .ad-description {
+        font-size: 1rem;
+    }
+
+    .details-page .ad-price {
+        font-size: 1.5rem;
+        margin-top: 10px;
+    }
+
+    .details-page .ad-location {
+        font-size: .9rem;
+    }
+
+    .listing-empty-img {
+        max-width: 150px !important;
+    }
+
+}
