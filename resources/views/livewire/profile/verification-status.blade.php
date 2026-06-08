@@ -193,7 +193,7 @@
                                             <i class="bi bi-upload me-1"></i> {{ __('Select Image') }}
                                         </button>
                                     @endif
-                                    <input type="file" class="d-none" id="idProofInput" wire:model="id_proof_file" accept="image/*">
+                                    <input type="file" class="visually-hidden" id="idProofInput" wire:model="id_proof_file" accept="image/*">
                                     @error('id_proof_file') <div class="text-danger small mt-2">{{ $message }}</div> @enderror
                                 </div>
                             </div>

@@ -277,7 +277,7 @@
                                     </div>
 
                                     <!-- Hidden File Input for Image Sharing -->
-                                    <input type="file" id="chat-image-upload" style="display: none;" wire:model="image_file" accept="image/*">
+                                    <input type="file" id="chat-image-upload" class="visually-hidden" wire:model="image_file" accept="image/*">
 
                                     <input type="text" wire:model="message_text" placeholder="Type a message..." class="message-send-input">
                                     <button type="submit" class="btn send-btn">

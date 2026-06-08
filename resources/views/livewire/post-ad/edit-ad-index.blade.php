@@ -210,14 +210,6 @@
                                 for="imageInput"
                                 style="cursor: pointer; min-height: 180px;"
                             >
-                                <input
-                                    wire:model.live="images"
-                                    type="file"
-                                    id="imageInput"
-                                    multiple
-                                    accept="image/*"
-                                    class="d-none"
-                                >
                                 <div class="upload-content text-center">
                                     <div class="upload-icon mb-3 mx-auto bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
                                         <i class="bi bi-cloud-arrow-up fs-2"></i>
@@ -226,6 +218,14 @@
                                     <p class="text-muted small mb-0">{{ __('or click to browse photos') }}</p>
                                 </div>
                             </label>
+                            <input
+                                wire:model.live="images"
+                                type="file"
+                                id="imageInput"
+                                multiple
+                                accept="image/*"
+                                class="visually-hidden"
+                            >
 
                             @error('images')
                                 <div class="text-danger small mt-2">{{ $message }}</div>
@@ -235,17 +235,17 @@
                             @enderror
 
                             <!-- New Photos Preview Grid -->
-                            @if(count($images) > 0 || $errors->has('images'))
-                                <div class="row g-3 mt-3">
-                                    <div class="col-md-2" wire:loading wire:target="images">
-                                        <div class="preview-card border rounded-4 d-flex justify-content-center align-items-center bg-light aspect-ratio-1">
-                                            <div class="text-center p-2">
-                                                <div class="spinner-border spinner-border-sm text-primary mb-1" role="status"></div>
-                                                <div class="small text-muted" style="font-size: 11px;">{{ __('Uploading...') }}</div>
-                                            </div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-2 col-4" wire:loading wire:target="images">
+                                    <div class="preview-card border rounded-4 d-flex justify-content-center align-items-center bg-light aspect-ratio-1">
+                                        <div class="text-center p-2">
+                                            <div class="spinner-border spinner-border-sm text-primary mb-1" role="status"></div>
+                                            <div class="small text-muted" style="font-size: 11px;">{{ __('Uploading...') }}</div>
                                         </div>
                                     </div>
+                                </div>
 
+                                @if(count($images) > 0 || $errors->has('images'))
                                     @foreach($images as $index => $image)
                                         @if ($image && !is_string($image) && method_exists($image, 'temporaryUrl'))
                                             <div class="col-md-2 col-4" wire:key="new-img-{{ $index }}">
@@ -263,8 +263,8 @@
                                             </div>
                                         @endif
                                     @endforeach
-                                </div>
-                            @endif
+                                @endif
+                            </div>
 
                         </div>
 

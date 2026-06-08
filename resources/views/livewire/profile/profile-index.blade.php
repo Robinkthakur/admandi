@@ -366,7 +366,7 @@
                                 <label for="avatar_file_input" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 p-0 d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; cursor: pointer;">
                                     <i class="bi bi-camera-fill text-white" style="font-size: 0.9rem;"></i>
                                 </label>
-                                <input type="file" id="avatar_file_input" class="d-none" wire:model="avatar_file" accept="image/*">
+                                <input type="file" id="avatar_file_input" class="visually-hidden" wire:model="avatar_file" accept="image/*">
                             </div>
                             <div class="mt-2 text-muted small">{{ __('Click camera icon to change profile picture') }}</div>
                             @error('avatar_file') <small class="text-danger d-block mt-1">{{ $message }}</small> @enderror
