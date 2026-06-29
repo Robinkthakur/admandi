@@ -223,8 +223,181 @@
         autoDetectLocation();
     </script>
 
-    <!-- PWA Service Worker Registration -->
+    <!-- PWA Install Prompt Banner -->
+    <div id="pwa-install-banner" class="pwa-install-banner shadow-lg" style="display: none;">
+        <div class="pwa-banner-content">
+            <button type="button" class="pwa-close-btn" id="pwa-close-btn" aria-label="Close">
+                <i class="bi bi-x"></i>
+            </button>
+            <div class="pwa-app-info">
+                <img src="{{ asset('favicon.png') }}" alt="adMandi Logo" class="pwa-app-logo">
+                <div class="pwa-text-details">
+                    <h6 class="pwa-app-title">Install adMandi</h6>
+                    <p class="pwa-app-desc">Install our app for a faster and better experience!</p>
+                </div>
+            </div>
+            <div class="pwa-action-buttons">
+                <button class="btn btn-sm pwa-btn-dismiss" id="pwa-btn-dismiss">Later</button>
+                <button class="btn btn-sm pwa-btn-install" id="pwa-btn-install">Install</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .pwa-install-banner {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99999;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            padding: 16px 20px;
+            width: 320px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: pwaSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes pwaSlideUp {
+            from {
+                transform: translateY(100px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .pwa-banner-content {
+            position: relative;
+        }
+        
+        .pwa-close-btn {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        
+        .pwa-close-btn:hover {
+            color: #333;
+        }
+        
+        .pwa-app-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .pwa-app-logo {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .pwa-text-details {
+            flex: 1;
+            padding-right: 16px;
+        }
+        
+        .pwa-app-title {
+            margin: 0 0 2px 0;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1a1a1a;
+        }
+        
+        .pwa-app-desc {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #666;
+            line-height: 1.3;
+        }
+        
+        .pwa-action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        
+        .pwa-btn-dismiss {
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: 0.78rem;
+            border: 1px solid #e0e0e0;
+            background: transparent;
+            color: #666;
+            transition: all 0.2s;
+        }
+        
+        .pwa-btn-dismiss:hover {
+            background: #f5f5f5;
+            color: #333;
+            border-color: #d0d0d0;
+        }
+        
+        .pwa-btn-install {
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 5px 14px;
+            font-size: 0.78rem;
+            background: #6047e6;
+            color: #fff;
+            border: 1px solid #6047e6;
+            transition: all 0.2s;
+        }
+        
+        .pwa-btn-install:hover {
+            background: #4e35cc;
+            border-color: #4e35cc;
+        }
+        
+        /* Responsive layout for mobile devices */
+        @media (max-width: 576px) {
+            .pwa-install-banner {
+                bottom: 0;
+                right: 0;
+                left: 0;
+                width: 100%;
+                border-radius: 20px 20px 0 0;
+                border-left: none;
+                border-right: none;
+                border-bottom: none;
+                padding: 16px 20px 24px 20px;
+                box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+                animation: pwaSlideUpMobile 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            
+            @keyframes pwaSlideUpMobile {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        }
+    </style>
+
+    <!-- PWA Registration & Install script -->
     <script>
+        // Register Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
@@ -232,6 +405,69 @@
                     .catch(err => console.error('Service Worker registration failed.', err));
             });
         }
+
+        // Install Popup Logic
+        let deferredPrompt;
+        const installBanner = document.getElementById('pwa-install-banner');
+        const btnInstall = document.getElementById('pwa-btn-install');
+        const btnDismiss = document.getElementById('pwa-btn-dismiss');
+        const btnClose = document.getElementById('pwa-close-btn');
+
+        const isStandalone = () => {
+            return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+        };
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            
+            // Check if the user already dismissed this prompt in the current session
+            const isDismissed = sessionStorage.getItem('pwa-prompt-dismissed');
+            
+            // Show the custom banner if not in standalone and not dismissed
+            if (!isStandalone() && !isDismissed) {
+                // Add a slight delay before showing the banner for better UX
+                setTimeout(() => {
+                    installBanner.style.display = 'block';
+                }, 2000);
+            }
+        });
+
+        if (btnInstall) {
+            btnInstall.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                
+                // Show the native browser install prompt
+                deferredPrompt.prompt();
+                
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`PWA install prompt response: ${outcome}`);
+                
+                // Clear the deferred prompt
+                deferredPrompt = null;
+                
+                // Hide our custom banner
+                installBanner.style.display = 'none';
+            });
+        }
+
+        const dismissBanner = () => {
+            installBanner.style.display = 'none';
+            // Set session storage so they aren't prompted again in the same session
+            sessionStorage.setItem('pwa-prompt-dismissed', 'true');
+        };
+
+        if (btnDismiss) btnDismiss.addEventListener('click', dismissBanner);
+        if (btnClose) btnClose.addEventListener('click', dismissBanner);
+
+        // Hide if installed successfully
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('adMandi PWA was installed successfully');
+            installBanner.style.display = 'none';
+        });
     </script>
 	
 </body>
