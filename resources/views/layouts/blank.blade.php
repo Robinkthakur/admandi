@@ -50,6 +50,13 @@
     {{-- icons --}}
     <link rel="icon" href="{{ asset('favicon.png') }}">
 
+    <!-- PWA Settings -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="adMandi">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
+
 </head>
 <body>
 	
@@ -214,6 +221,17 @@
             }
         }
         autoDetectLocation();
+    </script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered successfully.', reg))
+                    .catch(err => console.error('Service Worker registration failed.', err));
+            });
+        }
     </script>
 	
 </body>
