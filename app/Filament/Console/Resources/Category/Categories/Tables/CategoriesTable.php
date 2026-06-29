@@ -16,13 +16,10 @@ class CategoriesTable
     {
         return $table
             ->columns([
-                TextColumn::make('parent.name')
-                    ->label('Parent Category')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('slug')
-                    ->searchable(),
+                ImageColumn::make('image')
+                    ->disk('public'),
                 TextColumn::make('name')
+                    ->description(fn($record) => $record->parent?->name)
                     ->searchable(),
                 TextColumn::make('in_hn')
                     ->label('Hindi')
@@ -35,13 +32,6 @@ class CategoriesTable
                 IconColumn::make('status')
                     ->boolean()
                     ->sortable(),
-                ImageColumn::make('image'),
-                TextColumn::make('order_no')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('bgColor')
-                    ->label('BG Color')
-                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

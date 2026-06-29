@@ -23,6 +23,8 @@ class EditAdIndex extends Component
     public $price;
     public $state_id;
     public $city_id;
+    public $custom_values = [];
+    public $custom_fields_definition = [];
 
     public $existingImages = [];
     public $images = []; // new uploads
@@ -51,6 +53,16 @@ class EditAdIndex extends Component
         $this->price = $this->listing->price;
         $this->state_id = $this->listing->state_id;
         $this->city_id = $this->listing->city_id;
+
+        $category = Category::find($this->category_id);
+        $this->custom_fields_definition = $category?->custom_fields ?? [];
+        $this->custom_values = $this->listing->custom_fields ?? [];
+        
+        foreach ($this->custom_fields_definition as $field) {
+            if (!array_key_exists($field['name'], $this->custom_values)) {
+                $this->custom_values[$field['name']] = '';
+            }
+        }
 
         $this->loadExistingImages();
     }
@@ -91,6 +103,13 @@ class EditAdIndex extends Component
     {
         $this->category_id = $id;
         $this->subcategory_id = null;
+        
+        $category = Category::find($this->category_id);
+        $this->custom_fields_definition = $category?->custom_fields ?? [];
+        $this->custom_values = [];
+        foreach ($this->custom_fields_definition as $field) {
+            $this->custom_values[$field['name']] = '';
+        }
     }
 
     public function selectSubcategory($id)
@@ -100,7 +119,7 @@ class EditAdIndex extends Component
 
     public function submit()
     {
-        $this->validate([
+        $rules = [
             'category_id' => 'required',
             'title' => 'required|min:5|max:120',
             'description' => 'required|min:20|max:5000',
@@ -108,7 +127,24 @@ class EditAdIndex extends Component
             'state_id' => 'required',
             'city_id' => 'required',
             'images.*' => 'image|max:5120',
-        ]);
+        ];
+
+        $customAttributes = [];
+        foreach ($this->custom_fields_definition as $field) {
+            $fieldRule = [];
+            if (!empty($field['required'])) {
+                $fieldRule[] = 'required';
+            } else {
+                $fieldRule[] = 'nullable';
+            }
+            if ($field['type'] === 'number') {
+                $fieldRule[] = 'numeric';
+            }
+            $rules['custom_values.' . $field['name']] = implode('|', $fieldRule);
+            $customAttributes['custom_values.' . $field['name']] = $field['label'];
+        }
+
+        $this->validate($rules, [], $customAttributes);
 
         if (count($this->existingImages) + count($this->images) === 0) {
             $this->addError('images', 'Please upload at least one image.');
@@ -128,6 +164,7 @@ class EditAdIndex extends Component
             'price' => $this->price,
             'state_id' => $this->state_id,
             'city_id' => $this->city_id,
+            'custom_fields' => $this->custom_values,
         ]);
 
         // Upload new images if any

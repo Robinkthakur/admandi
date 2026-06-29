@@ -5,9 +5,12 @@ namespace App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['parent_id', 'slug', 'name', 'in_hn', 'in_pb', 'status', 'image', 'order_no'])]
+#[Fillable(['parent_id', 'slug', 'name', 'in_hn', 'in_pb', 'status', 'image', 'order_no', 'custom_fields'])]
 class Category extends Model
 {
+    protected $casts = [
+        'custom_fields' => 'array',
+    ];
     
     public function parent(){
         return $this->belongsTo(Category::class, 'parent_id');

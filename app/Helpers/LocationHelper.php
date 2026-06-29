@@ -53,8 +53,11 @@ if (! function_exists('get_location')) {
             }
 
             if (! $locationId) {
-                // Default to a city in Punjab (parent_id = 29) or 1
-                $defaultCity = Location::where('parent_id', 29)->where('type', 'city')->first();
+                // Default to a featured location, fallback to city in Punjab (parent_id = 29) or 1
+                $defaultCity = Location::where('is_featured', true)->first();
+                if (! $defaultCity) {
+                    $defaultCity = Location::where('parent_id', 29)->where('type', 'city')->first();
+                }
                 $locationId = $defaultCity ? $defaultCity->id : 1;
                 set_location($locationId);
             }

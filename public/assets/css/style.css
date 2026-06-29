@@ -404,8 +404,12 @@ header .location-bar input:focus+button i:before {
     filter: brightness(0) invert(1);
 }
 
-.mobile-nav .location-bar i {
+.mobile-nav .location-bar .location-drop-down-chevron {
     color: #fff !important;
+}
+
+.mobile-nav .dropdown-menu .location-bar i {
+    color: var(--primary) !important;
 }
 
 .mobile-nav .location-bar svg {

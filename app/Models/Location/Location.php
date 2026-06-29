@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Location extends Model
 {
     protected $fillable = [
-        'name', 'in_hn','in_pb', 'type', 'parent_id', 'slug', 'latitude', 'longitude'
+        'name', 'in_hn','in_pb', 'type', 'parent_id', 'slug', 'latitude', 'longitude', 'is_featured'
     ];
 
     public function getNameAttribute($value)

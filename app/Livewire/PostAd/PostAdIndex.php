@@ -40,6 +40,9 @@ class PostAdIndex extends Component
     public $state_id;
     public $city_id;
 
+    public $custom_values = [];
+    public $custom_fields_definition = [];
+
     /*
     |--------------------------------------------------------------------------
     | Images
@@ -110,17 +113,41 @@ class PostAdIndex extends Component
             if ($count >= $limit) {
                 return redirect()->route('ad-limit-exceeded');
             }
+
+            // Load custom fields definition
+            $category = Category::find($this->category_id);
+            $this->custom_fields_definition = $category?->custom_fields ?? [];
+            $this->custom_values = [];
+            foreach ($this->custom_fields_definition as $field) {
+                $this->custom_values[$field['name']] = '';
+            }
         }
 
         if ($this->step == 2) {
-            $this->validate([
+            $rules = [
                 'title' => 'required|min:5|max:120',
                 'description' => 'required|min:20|max:5000',
                 'price' => 'required|numeric|min:1',
                 'state_id' => 'required',
                 'city_id' => 'required',
+            ];
 
-            ]);
+            $customAttributes = [];
+            foreach ($this->custom_fields_definition as $field) {
+                $fieldRule = [];
+                if (!empty($field['required'])) {
+                    $fieldRule[] = 'required';
+                } else {
+                    $fieldRule[] = 'nullable';
+                }
+                if ($field['type'] === 'number') {
+                    $fieldRule[] = 'numeric';
+                }
+                $rules['custom_values.' . $field['name']] = implode('|', $fieldRule);
+                $customAttributes['custom_values.' . $field['name']] = $field['label'];
+            }
+
+            $this->validate($rules, [], $customAttributes);
         }
 
         $this->step++;
@@ -176,8 +203,7 @@ class PostAdIndex extends Component
 
     public function submit()
     {
-        $this->validate([
-
+        $rules = [
             'category_id' => 'required',
             'title' => 'required|min:5|max:120',
             'description' => 'required|min:20|max:5000',
@@ -186,8 +212,24 @@ class PostAdIndex extends Component
             'city_id' => 'required',
             'images' => 'required|max:10',
             'images.*' => 'image|max:5120',
+        ];
 
-        ]);
+        $customAttributes = [];
+        foreach ($this->custom_fields_definition as $field) {
+            $fieldRule = [];
+            if (!empty($field['required'])) {
+                $fieldRule[] = 'required';
+            } else {
+                $fieldRule[] = 'nullable';
+            }
+            if ($field['type'] === 'number') {
+                $fieldRule[] = 'numeric';
+            }
+            $rules['custom_values.' . $field['name']] = implode('|', $fieldRule);
+            $customAttributes['custom_values.' . $field['name']] = $field['label'];
+        }
+
+        $this->validate($rules, [], $customAttributes);
 
         $user = auth()->user();
         $limit = $user->isVerified()
@@ -225,6 +267,7 @@ class PostAdIndex extends Component
             'state_id' => $this->state_id,
             'city_id' => $this->city_id,
             'status' => 'pending',
+            'custom_fields' => $this->custom_values,
         ]);
 
         /*
@@ -258,6 +301,8 @@ class PostAdIndex extends Component
             'state_id',
             'city_id',
             'images',
+            'custom_values',
+            'custom_fields_definition',
         ]);
 
         $this->step = 1;

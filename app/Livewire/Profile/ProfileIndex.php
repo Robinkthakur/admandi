@@ -66,18 +66,18 @@ class ProfileIndex extends Component
 
     public function updatedEditLocationSearch($v)
     {
-        $this->edit_locations = Location::where(function($qry) {
-                if ($this->edit_location_search) {
-                    $qry->where('name', 'LIKE', '%' . $this->edit_location_search . '%');
-                }
-            })
-            ->limit(10)
-            ->get();
+        if (empty($this->edit_location_search)) {
+            $this->getEditLocations();
+        } else {
+            $this->edit_locations = Location::where('name', 'LIKE', '%' . $this->edit_location_search . '%')
+                ->limit(10)
+                ->get();
+        }
     }
 
     public function getEditLocations()
     {
-        $this->edit_locations = Location::where('parent_id', 29)->limit(10)->get();
+        $this->edit_locations = Location::where('is_featured', true)->limit(10)->get();
     }
 
     public function setEditLocation($locationId, $displayName)

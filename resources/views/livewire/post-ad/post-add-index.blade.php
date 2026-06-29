@@ -123,6 +123,68 @@
                     </div>
                     <div class="card-body p-4">
 
+                        {{-- Dynamic Custom Fields --}}
+                        @if(!empty($custom_fields_definition))
+                            <div class="row g-3 mb-4 mt-2">
+                                @foreach($custom_fields_definition as $field)
+                                    @php
+                                        // Compute column width: select or number/toggle could be half width, text full
+                                        $colClass = in_array($field['type'], ['select', 'number', 'toggle']) ? 'col-md-12' : 'col-md-12';
+                                    @endphp
+                                    <div class="{{ $colClass }}">
+                                        <label class="form-label fw-semibold">
+                                            {{ $field['label'] }}
+                                            @if(!empty($field['required']))
+                                                <span class="text-danger">*</span>
+                                            @endif
+                                        </label>
+                                        
+                                        @if($field['type'] === 'text')
+                                            <input type="text" class="form-control rounded-3" placeholder="{{ __('Enter :label', ['label' => $field['label']]) }}" wire:model.live="custom_values.{{ $field['name'] }}">
+                                        @elseif($field['type'] === 'number')
+                                            <input type="number" class="form-control rounded-3" placeholder="{{ __('Enter :label', ['label' => $field['label']]) }}" wire:model.live="custom_values.{{ $field['name'] }}">
+                                        @elseif($field['type'] === 'select' || $field['type'] === 'toggle')
+                                            @php
+                                                $optsRaw = $field['options'] ?? '';
+                                                if (is_array($optsRaw)) {
+                                                    $options = $optsRaw;
+                                                } else {
+                                                    $options = array_filter(array_map('trim', explode(',', (string)$optsRaw)));
+                                                }
+                                            @endphp
+
+                                            @if($field['type'] === 'select')
+                                                <select class="form-select rounded-3" wire:model.live="custom_values.{{ $field['name'] }}">
+                                                    <option value="">{{ __('Select :label', ['label' => $field['label']]) }}</option>
+                                                    @foreach($options as $opt)
+                                                        @if($opt !== '')
+                                                            <option value="{{ $opt }}">{{ $opt }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <div class="d-flex flex-wrap gap-2 mt-1">
+                                                    @foreach($options as $opt)
+                                                        @if($opt !== '')
+                                                            <button type="button"
+                                                                class="btn btn-sm rounded-pill px-3 py-2 border transition-all {{ ($custom_values[$field['name']] ?? '') === $opt ? 'btn-primary border-primary shadow-sm text-white' : 'btn-light border-light-subtle text-dark' }}"
+                                                                wire:click="$set('custom_values.{{ $field['name'] }}', '{{ ($custom_values[$field['name']] ?? '') === $opt ? '' : $opt }}')">
+                                                                {{ $opt }}
+                                                            </button>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        @endif
+                                        
+                                        @error('custom_values.'.$field['name'])
+                                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
                         <!-- Title -->
                         <div class="mb-4">
                             <label class="form-label fw-semibold d-flex justify-content-between align-items-center">

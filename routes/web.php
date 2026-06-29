@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\DevController;
+
 use App\Livewire\Chats\ChatIndex;
 use App\Livewire\Actions\Logout;
 
@@ -35,6 +37,8 @@ Route::get('/ads/{location}', ListingIndex::class);
 Route::get('/ads/{location}/{category}', ListingIndex::class);
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/dev', [DevController::class, 'index']);
 
     Route::get('/profile/my-ads', MyAds::class);
     Route::get('/profile/boost-ads', BoostAds::class)->name('boost-ads');

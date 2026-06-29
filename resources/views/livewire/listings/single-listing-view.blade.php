@@ -41,6 +41,59 @@
                                 {{ $ad->title }}
                             </div>
 
+                            {{-- Specifications Block --}}
+                            @if(!empty($ad->category?->custom_fields) && !empty($ad->custom_fields))
+                                @php
+                                    $hasSpecs = false;
+                                    foreach($ad->category->custom_fields as $field) {
+                                        $val = $ad->custom_fields[$field['name']] ?? null;
+                                        if ($val !== null && $val !== '') {
+                                            $hasSpecs = true;
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                @if($hasSpecs)
+                                    <div class="ad-specs-container mb-4 p-4 rounded-4 border bg-light-subtle shadow-sm">
+                                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-info-circle text-primary me-2"></i>{{ __('Specifications') }}</h6>
+                                        <div class="row g-3">
+                                            @foreach($ad->category->custom_fields as $field)
+                                                @php
+                                                    $value = $ad->custom_fields[$field['name']] ?? null;
+                                                @endphp
+                                                @if($value !== null && $value !== '')
+                                                    <div class="col-md-4 col-6">
+                                                        <div class="p-3 bg-white rounded-3 border d-flex align-items-center gap-3">
+                                                            <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; min-width: 40px;">
+                                                                @if(str_contains(strtolower($field['name']), 'brand'))
+                                                                    <i class="bi bi-tag-fill fs-5"></i>
+                                                                @elseif(str_contains(strtolower($field['name']), 'km') || str_contains(strtolower($field['name']), 'speed') || str_contains(strtolower($field['name']), 'mileage'))
+                                                                    <i class="bi bi-speedometer fs-5"></i>
+                                                                @elseif(str_contains(strtolower($field['name']), 'fuel'))
+                                                                    <i class="bi bi-fuel-pump-fill fs-5"></i>
+                                                                @else
+                                                                    <i class="bi bi-clipboard-data-fill fs-5"></i>
+                                                                @endif
+                                                            </div>
+                                                            <div>
+                                                                <small class="text-muted d-block text-truncate" style="max-width: 130px;">{{ $field['label'] }}</small>
+                                                                <span class="fw-semibold text-dark text-truncate d-inline-block" style="max-width: 140px;">
+                                                                    @if($field['type'] === 'number' && is_numeric($value))
+                                                                        {{ number_format($value) }}
+                                                                    @else
+                                                                        {{ $value }}
+                                                                    @endif
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+
                             <div class="ad-description ">
                                 {!! $ad->description !!}
                             </div>

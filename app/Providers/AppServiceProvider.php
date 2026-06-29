@@ -122,6 +122,51 @@ class AppServiceProvider extends ServiceProvider
                 ActivityLogger::log('Verification Purchased', "Verification package '{$packageName}' purchased (Amount: ₹{$payment->amount}).", $payment->user);
             }
         });
+
+        // 5. First Message Notification trigger
+        \App\Models\Chats\Message::created(function (\App\Models\Chats\Message $message) {
+            $conversation = $message->conversation;
+            if ($conversation && \App\Models\Chats\Message::where('conversation_id', $conversation->id)->count() === 1) {
+                // Determine recipient: if sender is buyer, recipient is seller, and vice versa
+                $recipient = ($message->sender_id === $conversation->buyer_id) ? $conversation->seller : $conversation->buyer;
+
+                if ($recipient) {
+                    $buyerName = $conversation->buyer->name ?? 'User';
+                    $sellerName = $conversation->seller->name ?? 'User';
+                    $listingTitle = $conversation->listing->title ?? 'Listing';
+                    $messageText = $message->message;
+                    $chatUrl = route('chat', ['c' => $conversation->id]);
+
+                    $search = ['{buyer_name}', '{seller_name}', '{listing_title}', '{message_text}', '{chat_url}'];
+                    $replace = [$buyerName, $sellerName, $listingTitle, $messageText, $chatUrl];
+
+                    // Send Email Notification
+                    if (\App\Models\Setting::get('first_message_email_enabled', false)) {
+                        $subject = str_replace($search, $replace, \App\Models\Setting::get('first_message_email_subject', 'New enquiry for your listing: {listing_title}'));
+                        $body = str_replace($search, $replace, \App\Models\Setting::get('first_message_email_body', "Hello {seller_name},\n\nYou received a new message from {buyer_name} for '{listing_title}':\n\n\"{message_text}\"\n\nReply here: {chat_url}"));
+
+                        try {
+                            \Illuminate\Support\Facades\Mail::to($recipient->email)->send(new \App\Mail\DynamicMail($subject, $body));
+                            \Illuminate\Support\Facades\Log::info("First message notification email sent to {$recipient->email}");
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error("Failed to send first message notification email to {$recipient->email}: " . $e->getMessage());
+                        }
+                    }
+
+                    // Send WhatsApp Notification
+                    if (\App\Models\Setting::get('first_message_whatsapp_enabled', false) && $recipient->phone) {
+                        $whatsappBody = str_replace($search, $replace, \App\Models\Setting::get('first_message_whatsapp_body', "Hello {seller_name}, you have a new message from {buyer_name} for '{listing_title}': \"{message_text}\". Reply: {chat_url}"));
+
+                        try {
+                            $whatsappService = app(\App\Services\WhatsAppService::class);
+                            $whatsappService->send($recipient->phone, $whatsappBody);
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error("Failed to send first message WhatsApp to {$recipient->phone}: " . $e->getMessage());
+                        }
+                    }
+                }
+            }
+        });
     }
 }
 

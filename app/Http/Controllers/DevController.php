@@ -10,7 +10,7 @@ use Str;
 class DevController extends Controller
 {
 
-    public function index()
+    public function ss()
     {
         // Main city
         $selectedCity = Location::where('name', 'Thanesar')->first();
@@ -70,21 +70,30 @@ class DevController extends Controller
         ]);
     }
 
-    public function indexOLD(Request $req)
+    public function index(Request $req)
     {
-        die();
-        $states = DB::table('cities')
-            ->orderBy('name', 'asc')
+        // die();
+        $cities = DB::table('cities')
+            ->orderBy('city', 'asc')
             ->get();
 
-        foreach ($states as $state) {
+        foreach ($cities as $city) {
 
-          
-            Location::where('name', $state->name)
-                ->where('type' , 'city')
-                ->update([
-                    'latitude' => $state->latitude,
-                    'longitude' => $state->longitude
+            $state = DB::table('states')
+                ->where('id', $city->state_id)
+                ->first();
+
+            $location = DB::table('locations')
+                ->where('name', $state->name)
+                ->first();    
+
+            Location::create([
+                    'name' => $city->city,
+                    'slug' => Str::slug($city->city),
+                    'type' => 'city',
+                    'parent_id' => $location->id,
+                    'latitude' => $city->latitude,
+                    'longitude' => $city->longitude
                 ]);
           
         }

@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
             \App\Http\Middleware\CheckSuspended::class,
+            \App\Http\Middleware\UpdateLastActiveAt::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

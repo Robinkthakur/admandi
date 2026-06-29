@@ -15,12 +15,13 @@ class Listing extends Model implements HasMedia
     use InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
-        'ad_id', 'user_id', 'category_id', 'subcategory_id', 'city_id', 'state_id', 'area_id', 'title', 'slug', 'description', 'price', 'old_price', 'status', 'is_featured', 'featured_until'
+        'ad_id', 'user_id', 'category_id', 'subcategory_id', 'city_id', 'state_id', 'area_id', 'title', 'slug', 'description', 'price', 'old_price', 'status', 'is_featured', 'featured_until', 'custom_fields'
     ];  
 
     protected $casts = [
         'created_at' => 'datetime',
         'featured_until' => 'datetime',
+        'custom_fields' => 'array',
     ];
 
     protected static function booted()

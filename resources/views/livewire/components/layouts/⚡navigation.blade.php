@@ -45,7 +45,7 @@ new class extends Component
 
     public function mount(){
         $this->getLocations();
-        $this->selected_location = get_location()?->display_name ?? 'Punjab';
+        $this->selected_location = get_location()?->display_name ?? (Location::where('is_featured', true)->first()?->display_name ?? 'Punjab');
         $this->updateWishlistCount();
         $this->updateNotificationCount();
         $this->search = request()->query('search', '');
@@ -62,7 +62,7 @@ new class extends Component
     }
 
     public function getLocations(){
-        $this->locations = Location::where('parent_id', 29)->limit(20)->get();
+        $this->locations = Location::where('is_featured', true)->limit(20)->get();
     }
 
     public function setLocation($locationId){
@@ -507,11 +507,11 @@ new class extends Component
                 <div class="location-bar border-0 p-0" x-data="{ open: false }" @click.outside="open = false">
                     <div class="dropdown">
                         <button class="btn p-0 d-flex align-items-center gap-1 border-0" type="button" @click="open = !open">
-                            <i class="bi bi-geo-alt text-primary fs-5"></i>
+                            <i class="bi bi-geo-alt  location-drop-down-chevron text-primary fs-5"></i>
                             <span class="small text-truncate text-white" style="max-width: 100%; font-weight: 300;">
                                 {{ $selected_location ? __($selected_location) : __('Location') }}
                             </span>
-                            <i class="bi bi-chevron-down text-muted" style="font-size: 0.6rem;"></i>
+                            <i class="bi bi-chevron-down location-drop-down-chevron" style="font-size: 0.6rem;"></i>
                         </button>
                         
                         <div class="dropdown-menu location-dropdown shadow-lg mt-2" :class="{ 'show': open }" x-show="open" style="display: block; position: absolute; left: 0; max-height: 400px; width: 280px; z-index: 1000;" wire:ignore.self>
